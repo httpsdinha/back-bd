@@ -7,7 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Usuario {
+model usuarios {
   id          Int      @id @default(autoincrement())
   nome        String
   email       String   @unique
@@ -15,28 +15,28 @@ model Usuario {
   senha       String
   status      String   @default("ativo")
   data_criacao DateTime @default(now())
-  emprestimos Emprestimo[]
+  emprestimos emprestimo[]
 }
 
-model Autor {
+model autor {
   id           Int      @id @default(autoincrement())
   nome         String
   nacionalidade String?
-  livros       Livro[]
+  livros       livro[]
 }
 
-model Livro {
+model livro {
   id           Int      @id @default(autoincrement())
   titulo       String
   id_autor     Int
   genero       String?
   quantidade   Int      @default(0)
   data_criacao DateTime @default(now())
-  autor        Autor    @relation(fields: [id_autor], references: [id])
-  emprestimos  Emprestimo[]
+  autor        autor    @relation(fields: [id_autor], references: [id])
+  emprestimos  emprestimo[]
 }
 
-model Emprestimo {
+model emprestimo {
   id                     Int      @id @default(autoincrement())
   id_usuario             Int
   id_livro               Int
@@ -44,11 +44,11 @@ model Emprestimo {
   data_devolucao_prevista DateTime
   data_devolucao_real    DateTime?
   status                 String   @default("ativo")
-  usuario                Usuario  @relation(fields: [id_usuario], references: [id])
-  livro                  Livro    @relation(fields: [id_livro], references: [id])
+  usuario                usuarios  @relation(fields: [id_usuario], references: [id])
+  livro                  livro    @relation(fields: [id_livro], references: [id])
 }
 
-model LogAlteracao {
+model log_alteracao {
   id               Int      @id @default(autoincrement())
   tabela_afetada   String
   tipo_alteracao   String
