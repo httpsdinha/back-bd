@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Usuario {
+  id          Int      @id @default(autoincrement())
+  nome        String
+  email       String   @unique
+  cpf         String   @unique
+  senha       String
+  status      String   @default("ativo")
+  data_criacao DateTime @default(now())
+  emprestimos Emprestimo[]
+}
+
+model Autor {
+  id           Int      @id @default(autoincrement())
+  nome         String
+  nacionalidade String?
+  livros       Livro[]
+}
+
+model Livro {
+  id           Int      @id @default(autoincrement())
+  titulo       String
+  id_autor     Int
+  genero       String?
+  quantidade   Int      @default(0)
+  data_criacao DateTime @default(now())
+  autor        Autor    @relation(fields: [id_autor], references: [id])
+  emprestimos  Emprestimo[]
+}
+
+model Emprestimo {
+  id                     Int      @id @default(autoincrement())
+  id_usuario             Int
+  id_livro               Int
+  data_emprestimo        DateTime @default(now())
+  data_devolucao_prevista DateTime
+  data_devolucao_real    DateTime?
+  status                 String   @default("ativo")
+  usuario                Usuario  @relation(fields: [id_usuario], references: [id])
+  livro                  Livro    @relation(fields: [id_livro], references: [id])
+}
+
+model LogAlteracao {
+  id               Int      @id @default(autoincrement())
+  tabela_afetada   String
+  tipo_alteracao   String
+  dados_anteriores Json?
+  dados_novos      Json?
+  usuario_responsavel String
+  data_hora        DateTime @default(now())
+}
