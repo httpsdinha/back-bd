@@ -1,15 +1,15 @@
 // ...existing code...
-const db = require('../models/Model');
+const db = require('../models/usuarioModel');
 
 const createUsuario = async (req, res) => {
-    const { nome, email, cpf, senha, status } = req.body;
-    if (!nome || !email || !cpf || !senha || !status) {
+    const { nome, email, cpf, status } = req.body;
+    if (!nome || !email || !cpf || !status) {
         return res.status(400).json({ error: "All fields are required" });
     }
     try {
         const result = await db.query(
-            `INSERT INTO usuarios (nome, email, cpf, senha, status) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [nome, email, cpf, senha, status]
+            `INSERT INTO usuarios (nome, email, cpf, status) VALUES ($1, $2, $3, $4) RETURNING *`,
+            [nome, email, cpf, status]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -41,28 +41,24 @@ const getUsuarioById = async (req, res) => {
 
 const updateUsuario = async (req, res) => {
     const { id } = req.params;
-    const { nome, email, cpf, senha, status } = req.body;
+    const { nome, email, cpf, status } = req.body;
     const fields = [];
     const values = [];
     let query = 'UPDATE usuarios SET ';
 
-    if (nome) {
+    if (nome !== undefined) {
         fields.push('nome');
         values.push(nome);
     }
-    if (email) {
+    if (email !== undefined) {
         fields.push('email');
         values.push(email);
     }
-    if (cpf) {
+    if (cpf !== undefined) {
         fields.push('cpf');
         values.push(cpf);
     }
-    if (senha) {
-        fields.push('senha');
-        values.push(senha);
-    }
-    if (status) {
+    if (status !== undefined) {
         fields.push('status');
         values.push(status);
     }
