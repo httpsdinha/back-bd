@@ -1,6 +1,6 @@
-
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const moment = require('moment');
 
 const createLivro = async (req, res) => {
   const { titulo, id_autor, genero, quantidade, data_criacao, autor } = req.body;
@@ -11,7 +11,7 @@ const createLivro = async (req, res) => {
         id_autor,
         genero,
         quantidade,
-        data_criacao,
+        data_criacao: moment(data_criacao).toISOString(),
         autor,
       },
     });
@@ -57,7 +57,7 @@ const updateLivro = async (req, res) => {
         id_autor,
         genero,
         quantidade,
-        data_criacao,
+        data_criacao: moment(data_criacao).toISOString(),
         autor,
       },
     });
