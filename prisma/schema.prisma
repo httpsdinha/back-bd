@@ -26,4 +26,11 @@ model livro {
   data_criacao DateTime @default(now())
   autor        String  
   usuarios     usuarios[] @relation("UsuarioLivros")
+  autor_rel    autor     @relation(fields: [id_autor], references: [id])
+}
+
+model autor {
+  id           Int      @id @default(autoincrement())
+  nome         String   @unique
+  livros       livro[]
 }

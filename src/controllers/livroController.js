@@ -5,10 +5,23 @@ const moment = require('moment');
 const createLivro = async (req, res) => {
   const { titulo, id_autor, genero, quantidade, data_criacao, autor } = req.body;
   try {
+    // Verifica se o autor já existe
+    let autorExistente = await prisma.autor.findUnique({
+      where: { nome: autor },
+    });
+
+    // Se o autor não existir, cria um novo autor
+    if (!autorExistente) {
+      autorExistente = await prisma.autor.create({
+        data: { nome: autor },
+      });
+    }
+
+    // Cria o livro com o id do autor existente ou recém-criado
     const livro = await prisma.livro.create({
       data: {
         titulo,
-        id_autor,
+        id_autor: autorExistente.id,
         genero,
         quantidade,
         data_criacao: moment(data_criacao).toISOString(),
@@ -50,11 +63,24 @@ const updateLivro = async (req, res) => {
   const { id } = req.params;
   const { titulo, id_autor, genero, quantidade, data_criacao, autor } = req.body;
   try {
+    // Verifica se o autor já existe
+    let autorExistente = await prisma.autor.findUnique({
+      where: { nome: autor },
+    });
+
+    // Se o autor não existir, cria um novo autor
+    if (!autorExistente) {
+      autorExistente = await prisma.autor.create({
+        data: { nome: autor },
+      });
+    }
+
+    // Atualiza o livro com o id do autor existente ou recém-criado
     const livro = await prisma.livro.update({
       where: { id: parseInt(id) },
       data: {
         titulo,
-        id_autor,
+        id_autor: autorExistente.id,
         genero,
         quantidade,
         data_criacao: moment(data_criacao).toISOString(),
