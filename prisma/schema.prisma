@@ -15,6 +15,8 @@ model usuarios {
   status      String   @default("ativo")
   data_criacao DateTime @default(now())
   livros      livro[] @relation("UsuarioLivros")
+  emprestimos  Emprestimo[]
+  logAlteracoes LogAlteracao[]
 }
 
 model livro {
@@ -26,6 +28,7 @@ model livro {
   data_criacao DateTime @default(now())
   autor        String  
   usuarios     usuarios[] @relation("UsuarioLivros")
+  emprestimos  Emprestimo[]
 }
 
 model Emprestimo {
@@ -36,6 +39,17 @@ model Emprestimo {
   dataDevolucao DateTime?
   statusDevolucao String
 
-  usuario     Usuario     @relation(fields: [usuarioId], references: [id])
-  livro       Livro       @relation(fields: [livroId], references: [id])
+  usuarios    usuarios     @relation(fields: [usuarioId], references: [id])
+  livro       livro       @relation(fields: [livroId], references: [id])
+}
+
+model LogAlteracao {
+  id          Int       @id @default(autoincrement())
+  acao        String    // Tipo da ação: "inserção", "atualização", "remoção"
+  descricao   String    // Descrição do que foi alterado
+  dataHora    DateTime  @default(now()) // Data e hora da alteração
+  tabela      String    // Nome da tabela alterada (ex: "Emprestimo", "Livro")
+  registroId  Int       // ID do registro alterado
+  usuarioId   Int?      // ID do usuário que fez a alteração (opcional)
+  usuarios    usuarios?  @relation(fields: [usuarioId], references: [id])
 }
