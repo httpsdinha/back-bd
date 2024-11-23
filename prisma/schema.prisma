@@ -29,6 +29,18 @@ model livro {
   autor_rel    autor     @relation(fields: [id_autor], references: [id])
 }
 
+model Emprestimo {
+  id          Int         @id @default(autoincrement())
+  usuarioId   Int
+  livroId     Int
+  dataEmprestimo DateTime
+  dataDevolucao DateTime?
+  statusDevolucao String
+
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id])
+  livro       Livro       @relation(fields: [livroId], references: [id])
+}
+
 model autor {
   id           Int      @id @default(autoincrement())
   nome         String   @unique
