@@ -19,16 +19,39 @@ model usuarios {
   logAlteracoes LogAlteracao[]
 }
 
+model autor {
+  id    Int    @id @default(autoincrement())
+  nome  String @unique
+  livros livro[]
+}
+
 model livro {
   id           Int      @id @default(autoincrement())
   titulo       String
-  id_autor     Int
   genero       String?
-  quantidade   Int      @default(0)
+  autorId      Int
   data_criacao DateTime @default(now())
-  autor        String  
+  autor        autor    @relation(fields: [autorId], references: [id])
   usuarios     usuarios[] @relation("UsuarioLivros")
   emprestimos  Emprestimo[]
+  generos      Genero[] @relation("LivroGeneros")
+  LivroGenero  LivroGenero[]
+}
+
+model Genero {
+  id           Int      @id @default(autoincrement())
+  nome         String   @unique
+  livros       livro[]  @relation("LivroGeneros")
+
+  LivroGenero LivroGenero[]
+}
+
+model LivroGenero {
+  livroId      Int
+  generoid     Int
+  livro        livro    @relation(fields: [livroId], references: [id])
+  genero       Genero   @relation(fields: [generoid], references: [id])
+  @@id([livroId, generoid])
 }
 
 model Emprestimo {

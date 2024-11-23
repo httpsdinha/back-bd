@@ -1,18 +1,24 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const moment = require('moment');
+const express = require('express');
+const router = express.Router();
 
 const createLivro = async (req, res) => {
-  const { titulo, id_autor, genero, quantidade, data_criacao, autor } = req.body;
+  const { titulo, autor, genero } = req.body;
   try {
+    const autorExistente = await prisma.autor.upsert({
+      where: { nome: autor },
+      update: {},
+      create: { nome: autor },
+    });
     const livro = await prisma.livro.create({
       data: {
         titulo,
-        id_autor,
         genero,
-        quantidade,
-        data_criacao: moment(data_criacao).toISOString(),
-        autor,
+        autor: {
+          connect: { id: autorExistente.id }
+        }
       },
     });
     res.status(201).json(livro);
@@ -48,17 +54,14 @@ const getLivroById = async (req, res) => {
 
 const updateLivro = async (req, res) => {
   const { id } = req.params;
-  const { titulo, id_autor, genero, quantidade, data_criacao, autor } = req.body;
+  const { titulo, autor, genero } = req.body;
   try {
     const livro = await prisma.livro.update({
       where: { id: parseInt(id) },
       data: {
         titulo,
-        id_autor,
-        genero,
-        quantidade,
-        data_criacao: moment(data_criacao).toISOString(),
         autor,
+        genero,
       },
     });
     res.status(200).json(livro);
@@ -79,10 +82,18 @@ const deleteLivro = async (req, res) => {
   }
 };
 
+router.post('/livros', createLivro);
+router.get('/livros', getLivros);
+router.get('/livros/:id', getLivroById);
+router.put('/livros/:id', updateLivro);
+router.delete('/livros/:id', deleteLivro);
+
+module.exports = router;
+
 module.exports = {
-  createLivro,
-  getLivros,
-  getLivroById,
-  updateLivro,
-  deleteLivro,
+    createLivro,
+    getLivros,
+    getLivroById,
+    updateLivro,
+    deleteLivro
 };

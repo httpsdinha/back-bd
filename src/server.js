@@ -1,12 +1,13 @@
-
 const express = require('express');
+const bodyParser = require('body-parser');
+const livroRoutes = require('./controllers/livroController');
+
 const app = express();
-const routes = require('./routes/Routes');
+const port = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use('/api', routes);
+app.use(bodyParser.json());
+app.use('/api', livroRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

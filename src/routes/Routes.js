@@ -7,6 +7,14 @@ const {
     createLivro, getLivros, getLivroById, updateLivro, deleteLivro 
 } = require('../controllers/livroController');
 
+// Ensure all controller functions are defined
+if (!createUsuario || !getUsuarios || !getUsuarioById || !updateUsuario || !deleteUsuario) {
+    throw new Error('One or more usuarioController functions are undefined');
+}
+if (!createLivro || !getLivros || !getLivroById || !updateLivro || !deleteLivro) {
+    throw new Error('One or more livroController functions are undefined');
+}
+
 // Usuario routes
 router.post('/usuarios', createUsuario);
 router.get('/usuarios', getUsuarios);

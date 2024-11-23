@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const { Pool } = require('pg');
 
@@ -12,14 +11,31 @@ const pool = new Pool({
 
 module.exports = {
     query: (text, params) => pool.query(text, params),
-    createLivro: (params) => pool.query(
-        `INSERT INTO livros (titulo, id_autor, genero, quantidade, data_criacao, autor) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        params
-    ),
+    createLivro: async (params) => {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            const livroResult = await client.query(
+                `INSERT INTO livros (titulo, autor, genero) VALUES ($1, $2, $3) RETURNING *`,
+                params
+            );
+            await client.query(
+                `INSERT INTO autores (nome) VALUES ($2) ON CONFLICT (nome) DO NOTHING`,
+                [params[1]]
+            );
+            await client.query('COMMIT');
+            return livroResult;
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    },
     getLivros: () => pool.query(`SELECT * FROM livros`),
     getLivroById: (id) => pool.query(`SELECT * FROM livros WHERE id = $1`, [id]),
     updateLivro: (params) => pool.query(
-        `UPDATE livros SET titulo = $1, id_autor = $2, genero = $3, quantidade = $4, data_criacao = $5, autor = $6 WHERE id = $7 RETURNING *`,
+        `UPDATE livros SET titulo = $1, autor = $2, genero = $3 WHERE id = $4 RETURNING *`,
         params
     ),
     deleteLivro: (id) => pool.query(`DELETE FROM livros WHERE id = $1 RETURNING *`, [id]),
