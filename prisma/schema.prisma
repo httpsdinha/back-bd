@@ -34,6 +34,7 @@ model Emprestimo {
   livroId     Int
   dataEmprestimo DateTime
   dataDevolucao DateTime?
+  statusDevolucao String
 
   usuario     Usuario     @relation(fields: [usuarioId], references: [id])
   livro       Livro       @relation(fields: [livroId], references: [id])
