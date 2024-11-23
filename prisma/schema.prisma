@@ -27,3 +27,15 @@ model livro {
   autor        String  
   usuarios     usuarios[] @relation("UsuarioLivros")
 }
+
+model Emprestimo {
+  id          Int         @id @default(autoincrement())
+  usuarioId   Int
+  livroId     Int
+  dataEmprestimo DateTime
+  dataDevolucao DateTime?
+  statusDevolucao String
+
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id])
+  livro       Livro       @relation(fields: [livroId], references: [id])
+}
