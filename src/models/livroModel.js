@@ -46,9 +46,29 @@ module.exports = {
     },
     getLivros: () => pool.query(`SELECT * FROM livros`),
     getLivroById: (id) => pool.query(`SELECT * FROM livros WHERE id = $1`, [id]),
-    updateLivro: (params) => pool.query(
-        `UPDATE livros SET titulo = $1, autor = $2, genero = $3 WHERE id = $4 RETURNING *`,
-        params
-    ),
+    updateLivro: async (id, params) => {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            const fields = [];
+            const values = [];
+            let index = 1;
+            for (const key in params) {
+                fields.push(`${key} = $${index}`);
+                values.push(params[key]);
+                index++;
+            }
+            values.push(id);
+            const query = `UPDATE livros SET ${fields.join(', ')} WHERE id = $${index} RETURNING *`;
+            const result = await client.query(query, values);
+            await client.query('COMMIT');
+            return result;
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    },
     deleteLivro: (id) => pool.query(`DELETE FROM livros WHERE id = $1 RETURNING *`, [id]),
 };

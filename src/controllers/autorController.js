@@ -27,6 +27,7 @@ const getAutorById = async (req, res) => {
   try {
     const autor = await prisma.autor.findUnique({
       where: { id: parseInt(id) },
+      include: { livros: { select: { titulo: true } } },
     });
     if (autor) {
       res.status(200).json(autor);
@@ -89,6 +90,45 @@ const getAllAutores = async (req, res) => {
   }
 };
 
+const getAutorWithLivros = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const autor = await prisma.autor.findUnique({
+      where: { id: parseInt(id) },
+      include: { livros: { select: { titulo: true } } },
+    });
+    if (autor) {
+      res.status(200).json(autor);
+    } else {
+      res.status(404).json({ error: 'Autor not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getAutoresWithLivros = async (req, res) => {
+  try {
+    const autores = await prisma.autor.findMany({
+      include: { livros: { select: { titulo: true } } },
+    });
+    res.status(200).json(autores);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getAllAutoresWithLivros = async (req, res) => {
+  try {
+    const autores = await prisma.autor.findMany({
+      include: { livros: { select: { titulo: true } } },
+    });
+    res.status(200).json(autores);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createAutor,
   getAutores,
@@ -96,5 +136,8 @@ module.exports = {
   getAutor,
   updateAutor,
   deleteAutor,
-  getAllAutores
+  getAllAutores,
+  getAutorWithLivros,
+  getAutoresWithLivros,
+  getAllAutoresWithLivros
 };
