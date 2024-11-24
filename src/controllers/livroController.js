@@ -12,14 +12,28 @@ const createLivro = async (req, res) => {
       update: {},
       create: { nome: autor },
     });
+    const generoExistente = await prisma.genero.upsert({
+      where: { nome: genero },
+      update: {},
+      create: { nome: genero },
+    });
     const livro = await prisma.livro.create({
       data: {
         titulo,
         genero,
         autor: {
           connect: { id: autorExistente.id }
+        },
+        generos: {
+          connect: { id: generoExistente.id }
         }
       },
+    });
+    await prisma.livroGenero.create({
+      data: {
+        livroId: livro.id,
+        generoid: generoExistente.id
+      }
     });
     res.status(201).json(livro);
   } catch (error) {

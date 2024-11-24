@@ -6,6 +6,9 @@ const {
 const { 
     createLivro, getLivros, getLivroById, updateLivro, deleteLivro 
 } = require('../controllers/livroController');
+const { 
+    createAutor, getAutores, getAutorById, updateAutor, deleteAutor, getAutor, getAllAutores 
+} = require('../controllers/autorController');
 
 // Ensure all controller functions are defined
 if (!createUsuario || !getUsuarios || !getUsuarioById || !updateUsuario || !deleteUsuario) {
@@ -13,6 +16,9 @@ if (!createUsuario || !getUsuarios || !getUsuarioById || !updateUsuario || !dele
 }
 if (!createLivro || !getLivros || !getLivroById || !updateLivro || !deleteLivro) {
     throw new Error('One or more livroController functions are undefined');
+}
+if (!createAutor || !getAutores || !getAutorById || !updateAutor || !deleteAutor || !getAutor || !getAllAutores) {
+    throw new Error('One or more autorController functions are undefined');
 }
 
 // Usuario routes
@@ -28,5 +34,13 @@ router.get('/livros', getLivros);
 router.get('/livros/:id', getLivroById);
 router.put('/livros/:id', updateLivro);
 router.delete('/livros/:id', deleteLivro);
+
+// Autor routes
+router.post('/autores', createAutor);
+router.get('/autores', getAllAutores);
+router.get('/autores/:id', getAutorById);
+router.get('/autores/nome/:nome', getAutor);
+router.put('/autores/:id', updateAutor);
+router.delete('/autores/:id', deleteAutor);
 
 module.exports = router;

@@ -1,7 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const express = require('express');
-const router = express.Router();
 
 const createAutor = async (req, res) => {
   const { nome } = req.body;
@@ -40,6 +38,22 @@ const getAutorById = async (req, res) => {
   }
 };
 
+const getAutor = async (req, res) => {
+  const { nome } = req.params;
+  try {
+    const autor = await prisma.autor.findUnique({
+      where: { nome },
+    });
+    if (autor) {
+      res.status(200).json(autor);
+    } else {
+      res.status(404).json({ error: 'Autor not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const updateAutor = async (req, res) => {
   const { id } = req.params;
   const { nome } = req.body;
@@ -66,10 +80,21 @@ const deleteAutor = async (req, res) => {
   }
 };
 
-router.post('/autores', createAutor);
-router.get('/autores', getAutores);
-router.get('/autores/:id', getAutorById);
-router.put('/autores/:id', updateAutor);
-router.delete('/autores/:id', deleteAutor);
+const getAllAutores = async (req, res) => {
+  try {
+    const autores = await prisma.autor.findMany();
+    res.status(200).json(autores);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
-module.exports = router;
+module.exports = {
+  createAutor,
+  getAutores,
+  getAutorById,
+  getAutor,
+  updateAutor,
+  deleteAutor,
+  getAllAutores
+};

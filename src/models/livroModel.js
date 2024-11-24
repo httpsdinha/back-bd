@@ -23,6 +23,18 @@ module.exports = {
                 `INSERT INTO autores (nome) VALUES ($2) ON CONFLICT (nome) DO NOTHING`,
                 [params[1]]
             );
+            await client.query(
+                `INSERT INTO generos (nome) VALUES ($3) ON CONFLICT (nome) DO NOTHING`,
+                [params[2]]
+            );
+            const generoResult = await client.query(
+                `SELECT id FROM generos WHERE nome = $1`,
+                [params[2]]
+            );
+            await client.query(
+                `INSERT INTO LivroGenero (livroId, generoid) VALUES ($1, $2)`,
+                [livroResult.rows[0].id, generoResult.rows[0].id]
+            );
             await client.query('COMMIT');
             return livroResult;
         } catch (error) {

@@ -17,6 +17,7 @@ module.exports = {
     ),
     getAutores: () => pool.query(`SELECT * FROM autores`),
     getAutorById: (id) => pool.query(`SELECT * FROM autores WHERE id = $1`, [id]),
+    getAutorByName: (nome) => pool.query(`SELECT * FROM autores WHERE nome = $1`, [nome]),
     updateAutor: (params) => pool.query(
         `UPDATE autores SET nome = $1 WHERE id = $2 RETURNING *`,
         params
