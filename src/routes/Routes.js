@@ -12,7 +12,7 @@ const {
 const { 
     createEmprestimo, getEmprestimos, getEmprestimoById, updateEmprestimo, deleteEmprestimo 
 } = require('../controllers/emprestimoController');
-const { logChange } = require('../controllers/logController');
+const { logChange, getLogs } = require('../controllers/logController');
 
 // Ensure all controller functions are defined
 if (!createUsuario || !getUsuarios || !getUsuarioById || !updateUsuario || !deleteUsuario) {
@@ -60,5 +60,6 @@ router.delete('/emprestimos/:id', deleteEmprestimo);
 
 // Log routes
 router.post('/logs', logChange);
+router.get('/logs', getLogs);
 
 module.exports = router;

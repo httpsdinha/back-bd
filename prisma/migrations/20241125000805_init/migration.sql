@@ -71,6 +71,19 @@ CREATE TABLE "LogAlteracao" (
 );
 
 -- CreateTable
+CREATE TABLE "Trigger" (
+    "id" SERIAL NOT NULL,
+    "tabela" TEXT NOT NULL,
+    "acao" TEXT NOT NULL,
+    "descricao" TEXT NOT NULL,
+    "dataHora" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "registroId" INTEGER NOT NULL,
+    "usuarioId" INTEGER,
+
+    CONSTRAINT "Trigger_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_UsuarioLivros" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
