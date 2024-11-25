@@ -67,23 +67,16 @@ model Emprestimo {
 }
 
 model LogAlteracao {
-  id          Int       @id @default(autoincrement())
-  acao        String    // Tipo da ação: "inserção", "atualização", "remoção"
-  descricao   String    // Descrição do que foi alterado
-  dataHora    DateTime  @default(now()) // Data e hora da alteração
-  tabela      String    // Nome da tabela alterada (ex: "Emprestimo", "Livro")
-  registroId  Int       // ID do registro alterado
-  usuarioId   Int?      // ID do usuário que fez a alteração (opcional)
-  usuarios    usuarios?  @relation(fields: [usuarioId], references: [id])
+  id           Int       @id @default(autoincrement())
+  tabela       String    // Nome da tabela alterada
+  acao         String    // Tipo da ação: "inserção", "atualização", "remoção"
+  descricao    String?   // Descrição do que foi alterado
+  dataHora     DateTime  @default(now()) // Data e hora da alteração
+  registroId   Int?      // ID do registro alterado
+  usuarioId    Int?      // ID do usuário que fez a alteração
+  usuarios     usuarios? @relation(fields: [usuarioId], references: [id])
+  dadosAntigos Json?     // Estado anterior
+  dadosNovos   Json?     // Estado novo
 }
 
-// Add triggers for logging changes
-model Trigger {
-  id          Int       @id @default(autoincrement())
-  tabela      String
-  acao        String
-  descricao   String
-  dataHora    DateTime  @default(now())
-  registroId  Int
-  usuarioId   Int?
-}
+

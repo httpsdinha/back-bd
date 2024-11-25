@@ -13,6 +13,12 @@ async function createLog(tabela, acao, descricao, registroId, usuarioId = null) 
   });
 }
 
+async function getLogs() {
+  const logs = await prisma.logAlteracao.findMany();
+  return logs;
+}
+
 module.exports = {
   createLog,
+  getLogs,
 };
